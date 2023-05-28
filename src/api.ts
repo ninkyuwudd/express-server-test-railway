@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import apotekRoute from "../src/routes/apotek";
+import apotekRoute from "./routes/apotek";
 
 export const app = express();
 
