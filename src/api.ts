@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import apotekRoute from "../src/routes/apotek";
 
 export const app = express();
 
@@ -14,11 +15,6 @@ app.get('/', (req, res) => {
   res.status(200).send({ status: 'ok' });
 });
 
-const api = express.Router();
 
-api.get('/hello', (req, res) => {
-  res.status(200).send({ message: 'hello world' });
-});
+app.use("/apotek",apotekRoute)
 
-// Version the api
-app.use('/api/v1', api);
