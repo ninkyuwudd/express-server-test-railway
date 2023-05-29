@@ -23,3 +23,9 @@ model PoliUmum{
   id String @id @default(cuid())
   tanggal DateTime
 }
+
+model JadwalPoli{
+  id String @id @default(cuid())
+  tanggal DateTime
+  idpoli String
+}
