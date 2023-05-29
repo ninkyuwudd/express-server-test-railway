@@ -18,3 +18,8 @@ model Apotek{
   name String
   detail String
 }
+
+model PoliUmum{
+  id String @id @default(cuid())
+  tanggal DateTime
+}
