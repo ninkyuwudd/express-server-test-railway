@@ -1,16 +1,16 @@
-import {PoliUmum} from "@prisma/client";
+import {NamaPoli} from "@prisma/client";
 import {Request, Router } from "express";
 import prisma from "../utils/prisma"
 
 
-const poliumumRoute = Router();
+const NamaPoliRoute = Router();
 
-poliumumRoute.get("/getPoliUmum",async (req,res) => {
+NamaPoliRoute.get("/getNamaPoli",async (req,res) => {
     try {
-        const poliUmumData = await prisma.poliUmum.findMany()
+        const NamaPoliData = await prisma.namaPoli.findMany()
 
         res.json({
-            data : poliUmumData
+            data : NamaPoliData
         })
     } catch (e) {
         res.json({
@@ -19,12 +19,14 @@ poliumumRoute.get("/getPoliUmum",async (req,res) => {
     }
 })
 
-poliumumRoute.post("/create",async (req: Request<{},{},PoliUmum>,res)=>{
-    const { tanggal } = req.body
+
+
+NamaPoliRoute.post("/createNamaPoli",async (req: Request<{},{},NamaPoli>,res)=>{
+    const { namapoli } = req.body
     try {
-        const data = await prisma.poliUmum.create({
+        const data = await prisma.namaPoli.create({
             data: {
-                tanggal : new Date(tanggal)
+                namapoli : namapoli
             }
         })
 
@@ -41,4 +43,4 @@ poliumumRoute.post("/create",async (req: Request<{},{},PoliUmum>,res)=>{
 
 
 
-export default poliumumRoute
+export default NamaPoliRoute
