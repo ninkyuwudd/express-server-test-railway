@@ -42,5 +42,47 @@ jadwalPoliRoute.post("/createJadwalPoli",async (req: Request<{}, {}, JadwalPoli>
 })
 
 
+jadwalPoliRoute.delete("/deleteJadwal/:id", async (req,res)=> {
+    const jadwalpoliId = req.params.id
+    try {
+        const deleteData = await prisma.jadwalPoli.delete({
+            where : {
+                id : jadwalpoliId
+            }
+        })
+        res.json({
+            message : `berhasil menghapus jadwal pada :${deleteData.tanggal} ,idpoli :${deleteData.idpoli}`
+        })
+    } catch (e) {
+        res.json({
+            message : "gagal menghapus data"
+        })
+    }
+})
+
+jadwalPoliRoute.put("/updateJadwal/:id",async (req ,res ) => {
+    const jadwalpoliId = req.params.id
+    try {
+        let jadwalPoliData = req.body
+        const updateData = await prisma.jadwalPoli.update({
+            where : {
+                id : jadwalpoliId
+            },
+            data : {
+                idpoli : jadwalPoliData.idpoli,
+                tanggal : jadwalPoliData.tanggal
+            }
+
+        })
+        res.json({
+            message : `Berhasil Update pada id: ${jadwalpoliId}`
+        })
+        console.log(updateData.id)
+    } catch (e) {
+        
+    }
+    
+})
+
 
 export default jadwalPoliRoute

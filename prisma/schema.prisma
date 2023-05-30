@@ -19,9 +19,9 @@ model Apotek{
   detail String
 }
 
-model PoliUmum{
+model NamaPoli{
   id String @id @default(cuid())
-  tanggal DateTime
+  namapoli String
 }
 
 model JadwalPoli{
