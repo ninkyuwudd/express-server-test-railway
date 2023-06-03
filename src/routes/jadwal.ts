@@ -1,8 +1,9 @@
 import { Router, Request } from 'express';
-import { Poli } from '@prisma/client';
+import { JadwalPoli, Poli } from '@prisma/client';
 import prisma from '../utils/prisma';
 
 interface PoliCreateInput extends Poli {}
+interface JadwalCreateInput extends JadwalPoli, Poli {}
 
 const JadwalRoute = Router();
 
@@ -64,8 +65,7 @@ JadwalRoute.post(
 
     if (!nama) {
       res.json({
-        message:
-          'please provide request body with: nama - nama poli'
+        message: 'please provide request body with: nama - nama poli'
       });
 
       return;
@@ -75,7 +75,7 @@ JadwalRoute.post(
       const poliData = await prisma.poli.create({
         data: {
           nama
-        },
+        }
       });
 
       res.json({
@@ -85,6 +85,68 @@ JadwalRoute.post(
     } catch (e) {
       res.json({
         message: 'db error!'
+      });
+    }
+  }
+);
+
+// create jadwal poli dan konek ke poli berdasarkan nama
+JadwalRoute.post(
+  '/createJadwal',
+  async (req: Request<{}, {}, JadwalCreateInput>, res) => {
+    const { hari, waktu, nama } = req.body;
+
+    if (!hari || !waktu || !nama) {
+      res.json({
+        message:
+          'please provide request body with: hari - jadwal hari poli, waktu - jadwal waktu poli, nama - nama poli'
+      });
+
+      return;
+    }
+
+    try {
+      const poliData = await prisma.poli.findFirst({
+        where: {
+          nama
+        },
+        include: {
+          jadwalPoli: true
+        }
+      });
+
+      if (poliData.jadwalPoli) {
+        for (const jadWalHari of poliData.jadwalPoli) {
+          if (jadWalHari.hari === hari) {
+            res.json({
+              message: `${poliData.nama} telah memiliki jadwal pada hari ${hari}`
+            });
+
+            break;
+          }
+        }
+        return;
+      }
+
+      const jadwalPoliData = await prisma.jadwalPoli.create({
+        data: {
+          hari,
+          waktu,
+          Poli: {
+            connect: {
+              id: poliData.id
+            }
+          }
+        }
+      });
+
+      res.json({
+        message: 'data created!',
+        data: jadwalPoliData
+      });
+    } catch (e) {
+      res.json({
+        message: 'nama poli tersebut tidak ada!'
       });
     }
   }
