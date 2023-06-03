@@ -22,10 +22,26 @@ model Apotek{
 model NamaPoli{
   id String @id @default(cuid())
   namapoli String
+  jadwals Jadwal[]
 }
+
+
+model Jadwal{
+  id String @id @default(cuid())
+  idpoli String
+  idjadwalpoli String
+  namaPoli     NamaPoli     @relation(fields: [idpoli], references: [id])
+  jadwalpoli   JadwalPoli   @relation(fields: [idjadwalpoli], references: [id])
+}
+
+
 
 model JadwalPoli{
   id String @id @default(cuid())
-  tanggal DateTime
-  idpoli String
+  hari String
+  waktu String
+  jadwals Jadwal[]
 }
+
+
+
