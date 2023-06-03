@@ -2,6 +2,8 @@ import { Router, Request } from 'express';
 import { JadwalPoli, Poli, Prisma } from '@prisma/client';
 import prisma from '../utils/prisma';
 
+interface PoliCreateInput extends Poli, JadwalPoli {}
+
 const JadwalRoute = Router();
 
 // get Jadwal by hari
@@ -37,8 +39,6 @@ JadwalRoute.get(
     });
   }
 );
-
-interface PoliCreateInput extends Poli, JadwalPoli {}
 
 JadwalRoute.post(
   '/createPoli',
