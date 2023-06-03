@@ -1,5 +1,5 @@
 import { Router, Request } from 'express';
-import { JadwalPoli, Poli, Prisma } from '@prisma/client';
+import { JadwalPoli, Poli } from '@prisma/client';
 import prisma from '../utils/prisma';
 
 interface PoliCreateInput extends Poli, JadwalPoli {}
@@ -9,7 +9,7 @@ const JadwalRoute = Router();
 // get Jadwal by hari
 JadwalRoute.get(
   '/getJadwalByDay',
-  async (req: Request<{}, {}, {}, { day: String }>, res) => {
+  async (req: Request<{}, {}, {}, { day: string }>, res) => {
     const { day } = req.query;
 
     if (!day) {
@@ -22,7 +22,7 @@ JadwalRoute.get(
     try {
       const jadwal = await prisma.jadwalPoli.findMany({
         where: {
-          hari: day as string | Prisma.StringFilter
+          hari: day
         },
         select: {
           hari: true,
