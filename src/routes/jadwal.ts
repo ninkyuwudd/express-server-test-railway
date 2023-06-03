@@ -132,11 +132,13 @@ JadwalRoute.post(
           }
         });
 
-        res.json({
-          message: errorMessage
-        });
+        if (errorMessage) {
+          res.json({
+            message: errorMessage
+          });
 
-        return;
+          return;
+        }
       }
 
       const jadwalPoliData = await prisma.jadwalPoli.create({
