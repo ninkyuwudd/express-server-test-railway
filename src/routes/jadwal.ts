@@ -14,6 +14,7 @@ JadwalRoute.get(
       res.json({
         message: 'please provide query string: day'
       });
+      return;
     }
 
     const jadwal = await prisma.jadwalPoli.findMany({
