@@ -10,7 +10,7 @@ const JadwalRoute = Router();
 /**
  * @method GET
  * ! Route: /getJadwalByDay
- * * Require: query string - day
+ * @param day - String: query string
  * * Example: /jadwal/getJadwalByDay?day=Senin
  */
 JadwalRoute.get(
@@ -55,7 +55,7 @@ JadwalRoute.get(
 /**
  * @method POST
  * ! Route: /createPoli
- * @param nama String
+ * @param nama String: Nama poli
  * * Example: { "nama": "Poli A" }
  */
 JadwalRoute.post(
