@@ -2,6 +2,7 @@ import {NamaPoli} from "@prisma/client";
 import {Request, Router } from "express";
 import prisma from "../utils/prisma"
 
+// const prisma = new PrismaClient
 
 const NamaPoliRoute = Router();
 
@@ -15,6 +16,25 @@ NamaPoliRoute.get("/getNamaPoli",async (req,res) => {
     } catch (e) {
         res.json({
             message : " error occure"
+        })
+    }
+})
+
+
+NamaPoliRoute.get("/getNamaJadwalPoli",async (req,res)=> {
+    try {
+        const NamaPoliData = await prisma.namaPoli.findMany({
+            include:{
+                jadwalpoli: true
+            }
+            
+        });
+
+        res.json(NamaPoliData)
+
+    } catch (e) {
+        res.json({
+            message : "error occure"
         })
     }
 })

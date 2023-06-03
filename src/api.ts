@@ -2,7 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import apotekRoute from "./routes/apotek";
 import poliumumRoute from "./routes/namapoli";
-import jadwalPoliRoute from "./routes/jadwal";
+import jadwalPoliRoute from "./routes/jadwalpoli";
+import JadwalRoute from './routes/jadwal';
 
 export const app = express();
 
@@ -21,4 +22,6 @@ app.get('/', (req, res) => {
 app.use("/apotek",apotekRoute)
 app.use("/jadwalpoli",jadwalPoliRoute)
 app.use("/namapoli",poliumumRoute)
+app.use("/jadwal",JadwalRoute)
+
 
