@@ -1,8 +1,8 @@
 import { Router, Request } from 'express';
-import { JadwalPoli, Poli } from '@prisma/client';
+import { Poli } from '@prisma/client';
 import prisma from '../utils/prisma';
 
-interface PoliCreateInput extends Poli, JadwalPoli {}
+interface PoliCreateInput extends Poli {}
 
 const JadwalRoute = Router();
 
@@ -55,19 +55,17 @@ JadwalRoute.get(
  * @method POST
  * ! Route: /createPoli
  * @param nama String
- * @param hari String
- * @param waktu String
- * * Example: { "nama": "Poli A", "hari": "Senin", "waktu": "09:00 - 12:00" }
+ * * Example: { "nama": "Poli A" }
  */
 JadwalRoute.post(
   '/createPoli',
   async (req: Request<{}, {}, PoliCreateInput>, res) => {
-    const { nama, hari, waktu } = req.body;
+    const { nama } = req.body;
 
-    if (!nama || !hari || !waktu) {
+    if (!nama) {
       res.json({
         message:
-          'please provide request body with: nama - nama poli, hari - jadwal hari poli, waktu - jadwal waktu poli'
+          'please provide request body with: nama - nama poli'
       });
 
       return;
@@ -76,17 +74,8 @@ JadwalRoute.post(
     try {
       const poliData = await prisma.poli.create({
         data: {
-          nama,
-          jadwalPoli: {
-            create: {
-              hari,
-              waktu
-            }
-          }
+          nama
         },
-        include: {
-          jadwalPoli: true
-        }
       });
 
       res.json({
