@@ -32,6 +32,9 @@ model Jadwal{
   idjadwalpoli String
   namaPoli     NamaPoli     @relation(fields: [idpoli], references: [id])
   jadwalpoli   JadwalPoli   @relation(fields: [idjadwalpoli], references: [id])
+
+  @@index([idjadwalpoli])
+  @@index([idpoli])
 }
 
 
