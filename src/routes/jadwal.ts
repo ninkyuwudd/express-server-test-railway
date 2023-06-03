@@ -6,7 +6,12 @@ interface PoliCreateInput extends Poli, JadwalPoli {}
 
 const JadwalRoute = Router();
 
-// get Jadwal by hari
+/**
+ * @method GET
+ * ! Route: /getJadwalByDay
+ * * Require: query tring - day
+ * * Example: /jadwal/getJadwalByDay?day=Senin
+ */
 JadwalRoute.get(
   '/getJadwalByDay',
   async (req: Request<{}, {}, {}, { day: string }>, res) => {
