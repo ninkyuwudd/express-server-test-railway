@@ -96,6 +96,7 @@ JadwalRoute.post(
  * @param hari - String
  * @param waktu - String
  * @param nama - String: Nama poli yang akan dikoneksikan dengan jadwal
+ * TODO: one route 2 way func
  * * Example: { "hari": "Senin", "waktu": "09:00 - 12:00", "nama": "Poli A" }
  */
 JadwalRoute.post(
@@ -123,15 +124,18 @@ JadwalRoute.post(
       });
 
       if (poliData.jadwalPoli) {
-        for (const jadWalHari of poliData.jadwalPoli) {
-          if (jadWalHari.hari === hari) {
-            res.json({
-              message: `${poliData.nama} telah memiliki jadwal pada hari ${hari}`
-            });
+        let errorMessage: String;
 
-            break;
+        poliData.jadwalPoli.some((jadwal) => {
+          if (jadwal.hari === hari) {
+            errorMessage = `${poliData.nama} telah memiliki jadwal pada hari ${hari}`;
           }
-        }
+        });
+
+        res.json({
+          message: errorMessage
+        });
+
         return;
       }
 
