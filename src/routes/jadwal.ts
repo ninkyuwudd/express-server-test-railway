@@ -19,24 +19,30 @@ JadwalRoute.get(
       return;
     }
 
-    const jadwal = await prisma.jadwalPoli.findMany({
-      where: {
-        hari: day as string | Prisma.StringFilter
-      },
-      select: {
-        hari: true,
-        waktu: true,
-        Poli: {
-          select: {
-            nama: true
+    try {
+      const jadwal = await prisma.jadwalPoli.findMany({
+        where: {
+          hari: day as string | Prisma.StringFilter
+        },
+        select: {
+          hari: true,
+          waktu: true,
+          Poli: {
+            select: {
+              nama: true
+            }
           }
         }
-      }
-    });
+      });
 
-    res.json({
-      data: jadwal
-    });
+      res.json({
+        data: jadwal
+      });
+    } catch (e) {
+      res.json({
+        message: 'db error!'
+      });
+    }
   }
 );
 
