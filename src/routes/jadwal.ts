@@ -90,7 +90,14 @@ JadwalRoute.post(
   }
 );
 
-// create jadwal poli dan konek ke poli berdasarkan nama
+/**
+ * @method POST
+ * ! Route: /createJadwal
+ * @param hari - String
+ * @param waktu - String
+ * @param nama - String: Nama poli yang akan dikoneksikan dengan jadwal
+ * * Example: { "hari": "Senin", "waktu": "09:00 - 12:00", "nama": "Poli A" }
+ */
 JadwalRoute.post(
   '/createJadwal',
   async (req: Request<{}, {}, JadwalCreateInput>, res) => {
