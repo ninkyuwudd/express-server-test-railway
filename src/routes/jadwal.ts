@@ -9,7 +9,7 @@ const JadwalRoute = Router();
 /**
  * @method GET
  * ! Route: /getJadwalByDay
- * * Require: query tring - day
+ * * Require: query string - day
  * * Example: /jadwal/getJadwalByDay?day=Senin
  */
 JadwalRoute.get(
@@ -51,6 +51,14 @@ JadwalRoute.get(
   }
 );
 
+/**
+ * @method POST
+ * ! Route: /createPoli
+ * @param nama String
+ * @param hari String
+ * @param waktu String
+ * * Example: { "nama": "Poli A", "hari": "Senin", "waktu": "09:00 - 12:00" }
+ */
 JadwalRoute.post(
   '/createPoli',
   async (req: Request<{}, {}, PoliCreateInput>, res) => {
