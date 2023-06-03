@@ -1,5 +1,5 @@
 import { Router, Request } from 'express';
-import { Prisma } from '@prisma/client';
+import { JadwalPoli, Poli, Prisma } from '@prisma/client';
 import prisma from '../utils/prisma';
 
 const JadwalRoute = Router();
@@ -35,6 +35,50 @@ JadwalRoute.get(
     res.json({
       data: jadwal
     });
+  }
+);
+
+interface PoliCreateInput extends Poli, JadwalPoli {}
+
+JadwalRoute.post(
+  '/createPoli',
+  async (req: Request<{}, {}, PoliCreateInput>, res) => {
+    const { nama, hari, waktu } = req.body;
+
+    if (!nama || !hari || !waktu) {
+      res.json({
+        message:
+          'please provide request body with: nama - nama poli, hari - jadwal hari poli, waktu - jadwal waktu poli'
+      });
+
+      return;
+    }
+
+    try {
+      const poliData = await prisma.poli.create({
+        data: {
+          nama,
+          jadwalPoli: {
+            create: {
+              hari,
+              waktu
+            }
+          }
+        },
+        include: {
+          jadwalPoli: true
+        }
+      });
+
+      res.json({
+        message: 'data created!',
+        data: poliData
+      });
+    } catch (e) {
+      res.json({
+        message: 'db error!'
+      });
+    }
   }
 );
 
