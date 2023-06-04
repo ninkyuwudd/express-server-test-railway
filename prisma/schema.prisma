@@ -18,3 +18,20 @@ model Apotek{
   name String
   detail String
 }
+
+// adding new Poli and JadwalPoli
+model Poli {
+  id         String       @id @default(cuid())
+  nama       String
+  jadwalPoli JadwalPoli[]
+}
+
+model JadwalPoli {
+  id     String @id @default(cuid())
+  hari   String
+  waktu  String
+  Poli   Poli   @relation(fields: [poliId], references: [id])
+  poliId String
+
+  @@index([poliId])
+}
