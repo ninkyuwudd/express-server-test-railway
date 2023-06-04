@@ -20,6 +20,8 @@ model Apotek{
 }
 
 
+// adding new Poli and JadwalPoli
+
 model Poli {
   id         String       @id @default(cuid())
   nama       String

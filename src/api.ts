@@ -18,6 +18,7 @@ app.get('/', (req, res) => {
 
 
 app.use("/apotek",apotekRoute)
-app.use("/jadwal",JadwalRoute)
+
+app.use("/jadwal", JadwalRoute)
 
 
