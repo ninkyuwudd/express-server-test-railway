@@ -52,6 +52,66 @@ JadwalRoute.get(
   }
 );
 
+
+
+JadwalRoute.get(
+  '/getJadwalByPoli',
+  async (req: Request<{}, {}, {}, { poli: string }>, res) => {
+    const { poli } = req.query;
+
+    if (!poli) {
+      res.json({
+        message: 'please provide query string: poli'
+      });
+      return;
+    }
+
+    try {
+      const jadwal = await prisma.poli.findMany({
+        where: {
+          nama: poli
+        },
+        select: {
+          nama: true,
+          jadwalPoli: {
+            select: {
+              hari : true,
+              waktu : true
+            }
+          }
+        }
+      });
+
+      res.json({
+        data: jadwal
+      });
+    } catch (e) {
+      res.json({
+        message: 'db error!'
+      });
+    }
+  }
+);
+
+
+
+JadwalRoute.get("/getPoli",async (re,res) => {
+  const getpolidata = await prisma.poli.findMany()
+
+  try {
+    res.json({
+      data: getpolidata
+  })
+
+  } catch (e) {
+    res.json({
+      message : "error fetching data!"
+  })
+  }
+})
+
+
+
 /**
  * @method POST
  * ! Route: /createPoli
@@ -96,6 +156,7 @@ JadwalRoute.post(
  * @param hari - String
  * @param waktu - String
  * @param nama - String: Nama poli yang akan dikoneksikan dengan jadwal
+
  * TODO: one route 2 way func
  * * Example: { "hari": "Senin", "waktu": "09:00 - 12:00", "nama": "Poli A" }
  */
@@ -166,3 +227,4 @@ JadwalRoute.post(
 );
 
 export default JadwalRoute;
+

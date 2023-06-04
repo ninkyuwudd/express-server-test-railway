@@ -19,7 +19,9 @@ model Apotek{
   detail String
 }
 
+
 // adding new Poli and JadwalPoli
+
 model Poli {
   id         String       @id @default(cuid())
   nama       String
@@ -35,3 +37,4 @@ model JadwalPoli {
 
   @@index([poliId])
 }
+
