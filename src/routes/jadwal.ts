@@ -1,44 +1,223 @@
-import { Jadwal } from "@prisma/client";
-import { Request,Router } from "express";
-import prisma from "../utils/prisma";
+import { Router, Request } from 'express';
+import { JadwalPoli, Poli } from '@prisma/client';
+import prisma from '../utils/prisma';
 
+interface PoliCreateInput extends Poli {}
+interface JadwalCreateInput extends JadwalPoli, Poli {}
 
 const JadwalRoute = Router();
 
-JadwalRoute.get("/getJadwal",async (req,res) => {
-    try {
-        const JadwalData = await prisma.jadwal.findMany()
+/**
+ * @method GET
+ * ! Route: /getJadwalByDay
+ * @param day - String: query string
+ * * Example: /jadwal/getJadwalByDay?day=Senin
+ */
+JadwalRoute.get(
+  '/getJadwalByDay',
+  async (req: Request<{}, {}, {}, { day: string }>, res) => {
+    const { day } = req.query;
 
-        res.json({
-            data : JadwalData
-        })
-    } catch (e) {
-        res.json({
-            message : "error occure"
-        })
+    if (!day) {
+      res.json({
+        message: 'please provide query string: day'
+      });
+      return;
     }
-});
 
-JadwalRoute.post("/createJadwal",async (req: Request<{}, {}, Jadwal> ,res) => {
-    const { idpoli , idjadwalpoli } = req.body
     try {
-
-        const data = await prisma.jadwal.create({
-            data : {
-                idpoli,
-                idjadwalpoli
+      const jadwal = await prisma.jadwalPoli.findMany({
+        where: {
+          hari: day
+        },
+        select: {
+          hari: true,
+          waktu: true,
+          Poli: {
+            select: {
+              nama: true
             }
-        })
+          }
+        }
+      });
 
-        res.json({
-            message : "data berhasil dibuat",
-            data
-        })
+      res.json({
+        data: jadwal
+      });
     } catch (e) {
-        console.log(e),
-        res.json("server error !")
+      res.json({
+        message: 'db error!'
+      });
     }
+  }
+);
+
+
+JadwalRoute.get(
+  '/getJadwalByPoli',
+  async (req: Request<{}, {}, {}, { poli: string }>, res) => {
+    const { poli } = req.query;
+
+    if (!poli) {
+      res.json({
+        message: 'please provide query string: poli'
+      });
+      return;
+    }
+
+    try {
+      const jadwal = await prisma.poli.findMany({
+        where: {
+          nama: poli
+        },
+        select: {
+          nama: true,
+          jadwalPoli: {
+            select: {
+              hari : true,
+              waktu : true
+            }
+          }
+        }
+      });
+
+      res.json({
+        data: jadwal
+      });
+    } catch (e) {
+      res.json({
+        message: 'db error!'
+      });
+    }
+  }
+);
+
+
+
+JadwalRoute.get("/getPoli",async (re,res) => {
+  const getpolidata = await prisma.poli.findMany()
+
+  try {
+    res.json({
+      data: getpolidata
+  })
+
+  } catch (e) {
+    res.json({
+      message : "error fetching data!"
+  })
+  }
 })
 
+/**
+ * @method POST
+ * ! Route: /createPoli
+ * @param nama String: Nama poli
+ * * Example: { "nama": "Poli A" }
+ */
+JadwalRoute.post(
+  '/createPoli',
+  async (req: Request<{}, {}, PoliCreateInput>, res) => {
+    const { nama } = req.body;
 
-export default JadwalRoute
+    if (!nama) {
+      res.json({
+        message: 'please provide request body with: nama - nama poli'
+      });
+
+      return;
+    }
+
+    try {
+      const poliData = await prisma.poli.create({
+        data: {
+          nama
+        }
+      });
+
+      res.json({
+        message: 'data created!',
+        data: poliData
+      });
+    } catch (e) {
+      res.json({
+        message: 'db error!'
+      });
+    }
+  }
+);
+
+/**
+ * @method POST
+ * ! Route: /createJadwal
+ * @param hari - String
+ * @param waktu - String
+ * @param nama - String: Nama poli yang akan dikoneksikan dengan jadwal
+ * * Example: { "hari": "Senin", "waktu": "09:00 - 12:00", "nama": "Poli A" }
+ */
+ JadwalRoute.post(
+  '/createJadwal',
+  async (req: Request<{}, {}, JadwalCreateInput>, res) => {
+    const { hari, waktu, nama } = req.body;
+
+    if (!hari || !waktu || !nama) {
+      res.json({
+        message:
+          'please provide request body with: hari - jadwal hari poli, waktu - jadwal waktu poli, nama - nama poli'
+      });
+
+      return;
+    }
+
+    try {
+      const poliData = await prisma.poli.findFirst({
+        where: {
+          nama
+        },
+        include: {
+          jadwalPoli: true
+        }
+      });
+
+      if (poliData.jadwalPoli) {
+        let errorMessage: String;
+
+        poliData.jadwalPoli.some((jadwal) => {
+          if (jadwal.hari === hari) {
+            errorMessage = `${poliData.nama} telah memiliki jadwal pada hari ${hari}`;
+          }
+        });
+
+        if (errorMessage) {
+          res.json({
+            message: errorMessage
+          });
+
+          return;
+        }
+      }
+
+      const jadwalPoliData = await prisma.jadwalPoli.create({
+        data: {
+          hari,
+          waktu,
+          Poli: {
+            connect: {
+              id: poliData.id
+            }
+          }
+        }
+      });
+
+      res.json({
+        message: 'data created!',
+        data: jadwalPoliData
+      });
+    } catch (e) {
+      res.json({
+        message: 'nama poli tersebut tidak ada!'
+      });
+    }
+  }
+);
+export default JadwalRoute;

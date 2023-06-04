@@ -19,29 +19,20 @@ model Apotek{
   detail String
 }
 
-model NamaPoli{
-  id String @id @default(cuid())
-  namapoli String
-  jadwals Jadwal[]
+
+model Poli {
+  id         String       @id @default(cuid())
+  nama       String
+  jadwalPoli JadwalPoli[]
 }
 
+model JadwalPoli {
+  id     String @id @default(cuid())
+  hari   String
+  waktu  String
+  Poli   Poli   @relation(fields: [poliId], references: [id])
+  poliId String
 
-model Jadwal{
-  id String @id @default(cuid())
-  idpoli String
-  idjadwalpoli String
-  namaPoli     NamaPoli     @relation(fields: [idpoli], references: [id])
-  jadwalpoli   JadwalPoli   @relation(fields: [idjadwalpoli], references: [id])
+  @@index([poliId])
 }
-
-
-
-model JadwalPoli{
-  id String @id @default(cuid())
-  hari String
-  waktu String
-  jadwals Jadwal[]
-}
-
-
 
