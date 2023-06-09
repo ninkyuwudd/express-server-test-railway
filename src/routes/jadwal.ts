@@ -31,6 +31,7 @@ JadwalRoute.get(
           hari: day
         },
         select: {
+          id : true,
           hari: true,
           waktu: true,
           Poli: {
@@ -93,6 +94,60 @@ JadwalRoute.get(
 );
 
 
+JadwalRoute.get(
+  '/getJadwalByPoliByDay',
+  async (req: Request<{}, {}, {}, { poli: string,day: string }>, res) => {
+    const { poli , day } = req.query;
+
+    if (!poli || !day) {
+      res.json({
+        message: 'please provide query string: poli or day'
+      });
+      return;
+    }
+
+    try {
+      const jadwal = await prisma.poli.findMany({
+        where: {
+          nama: poli,
+          jadwalPoli : {
+            some: {
+              hari : day
+            }
+          }
+
+        },
+        select: {
+          nama: true,
+          jadwalPoli: {
+            select: {
+              hari : true,
+              waktu : true
+            },
+            where: {
+              hari: day
+            }
+          }
+        }
+      });
+
+      res.json({
+        data: jadwal
+      });
+    } catch (e) {
+      res.json({
+        message: 'db error!'
+      });
+    }
+  }
+);
+
+
+
+
+
+
+
 
 JadwalRoute.get("/getPoli",async (re,res) => {
   const getpolidata = await prisma.poli.findMany()
@@ -147,6 +202,9 @@ JadwalRoute.post(
   }
 );
 
+
+
+
 /**
  * @method POST
  * ! Route: /createJadwal
@@ -182,11 +240,11 @@ JadwalRoute.post(
       if (poliData.jadwalPoli) {
         let errorMessage: String;
 
-        poliData.jadwalPoli.some((jadwal) => {
-          if (jadwal.hari === hari) {
-            errorMessage = `${poliData.nama} telah memiliki jadwal pada hari ${hari}`;
-          }
-        });
+        // poliData.jadwalPoli.some((jadwal) => {
+        //   if (jadwal.hari === hari) {
+        //     errorMessage = `${poliData.nama} telah memiliki jadwal pada hari ${hari}`;
+        //   }
+        // });
 
         if (errorMessage) {
           res.json({
@@ -220,4 +278,49 @@ JadwalRoute.post(
     }
   }
 );
+
+
+JadwalRoute.delete("/delPoli/:id",async(req,res) => {
+  const poliId = req.params.id
+  
+  try {
+    const deleteData = await prisma.poli.delete({
+      where : {
+        id : poliId
+      }
+    })
+
+    res.json({
+      message : `berhasil menghapus : ${deleteData.nama}`
+    })
+  } catch (e) {
+    res.json({
+      message : `gagal menghapus data`
+    })
+  }
+})
+
+
+JadwalRoute.delete("/delJadwal/:id",async (req,res) => {
+  const jdwl = req.params.id
+  try {
+    const deleteData = await prisma.jadwalPoli.delete({
+      where : {
+        id : jdwl
+    }})
+
+    res.json({
+      message : `berhasil menghapus ${deleteData.hari}`
+    })
+
+  } catch (e) {
+    res.json({
+      message : "gagal menghapus"
+    })
+  }
+})
+
+
+
+
 export default JadwalRoute;
