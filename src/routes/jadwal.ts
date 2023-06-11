@@ -31,7 +31,7 @@ JadwalRoute.get(
           hari: day
         },
         select: {
-          id : true,
+          id: true,
           hari: true,
           waktu: true,
           Poli: {
@@ -52,8 +52,6 @@ JadwalRoute.get(
     }
   }
 );
-
-
 
 JadwalRoute.get(
   '/getJadwalByPoli',
@@ -76,8 +74,8 @@ JadwalRoute.get(
           nama: true,
           jadwalPoli: {
             select: {
-              hari : true,
-              waktu : true
+              hari: true,
+              waktu: true
             }
           }
         }
@@ -94,11 +92,10 @@ JadwalRoute.get(
   }
 );
 
-
 JadwalRoute.get(
   '/getJadwalByPoliByDay',
-  async (req: Request<{}, {}, {}, { poli: string,day: string }>, res) => {
-    const { poli , day } = req.query;
+  async (req: Request<{}, {}, {}, { poli: string; day: string }>, res) => {
+    const { poli, day } = req.query;
 
     if (!poli || !day) {
       res.json({
@@ -111,19 +108,18 @@ JadwalRoute.get(
       const jadwal = await prisma.poli.findMany({
         where: {
           nama: poli,
-          jadwalPoli : {
+          jadwalPoli: {
             some: {
-              hari : day
+              hari: day
             }
           }
-
         },
         select: {
           nama: true,
           jadwalPoli: {
             select: {
-              hari : true,
-              waktu : true
+              hari: true,
+              waktu: true
             },
             where: {
               hari: day
@@ -143,29 +139,19 @@ JadwalRoute.get(
   }
 );
 
-
-
-
-
-
-
-
-JadwalRoute.get("/getPoli",async (re,res) => {
-  const getpolidata = await prisma.poli.findMany()
+JadwalRoute.get('/getPoli', async (re, res) => {
+  const getpolidata = await prisma.poli.findMany();
 
   try {
     res.json({
       data: getpolidata
-  })
-
+    });
   } catch (e) {
     res.json({
-      message : "error fetching data!"
-  })
+      message: 'error fetching data!'
+    });
   }
-})
-
-
+});
 
 /**
  * @method POST
@@ -204,9 +190,6 @@ JadwalRoute.post(
     }
   }
 );
-
-
-
 
 /**
  * @method POST
@@ -284,52 +267,85 @@ JadwalRoute.post(
   }
 );
 
+JadwalRoute.delete('/delPoli/:id', async (req, res) => {
+  const poliId = req.params.id;
 
-
-JadwalRoute.delete("/delPoli/:id",async(req,res) => {
-  const poliId = req.params.id
-  
   try {
     const deleteData = await prisma.poli.delete({
-      where : {
-        id : poliId
+      where: {
+        id: poliId
       }
-    })
+    });
 
     res.json({
-      message : `berhasil menghapus : ${deleteData.nama}`
-    })
+      message: `berhasil menghapus : ${deleteData.nama}`
+    });
   } catch (e) {
     res.json({
-      message : `gagal menghapus data`
-    })
+      message: `gagal menghapus data`
+    });
   }
-})
+});
 
-
-JadwalRoute.delete("/delJadwal/:id",async (req,res) => {
-  const jdwl = req.params.id
+JadwalRoute.delete('/delJadwal/:id', async (req, res) => {
+  const jdwl = req.params.id;
   try {
     const deleteData = await prisma.jadwalPoli.delete({
-      where : {
-        id : jdwl
-    }})
+      where: {
+        id: jdwl
+      }
+    });
 
     res.json({
-      message : `berhasil menghapus ${deleteData.hari}`
-    })
-
+      message: `berhasil menghapus ${deleteData.hari}`
+    });
   } catch (e) {
     res.json({
-      message : "gagal menghapus"
-    })
+      message: 'gagal menghapus'
+    });
   }
-})
+});
 
+/**
+ * @method PUT
+ * ! Route: /updateJadwal/:id
+ *
+ * * Example: { "hari": "Senin", "waktu": "09:00 - 12:00", "poliId": "id" }
+ */
+JadwalRoute.put(
+  '/updateJadwal/:id',
+  async (req: Request<{ id }, {}, JadwalPoli>, res) => {
+    const { id } = req.params;
+    const { hari, waktu } = req.body;
 
+    // get jadwal
+    try {
+      const jadwal = await prisma.jadwalPoli.findFirst({
+        where: {
+          id
+        }
+      });
 
+      const jadwalUpdated = await prisma.jadwalPoli.update({
+        where: {
+          id: jadwal.id
+        },
+        data: {
+          hari: hari ?? jadwal.hari,
+          waktu: waktu ?? jadwal.waktu
+        }
+      });
 
+      res.json({
+        message: 'update success',
+        data: jadwalUpdated
+      });
+    } catch (_) {
+      res.json({
+        message: 'jadwal dengan id berikut tidak dapat ditemukan!'
+      });
+    }
+  }
+);
 
 export default JadwalRoute;
-
-
