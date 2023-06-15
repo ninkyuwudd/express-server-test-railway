@@ -54,6 +54,7 @@ JadwalRoute.get(
 );
 
 
+
 JadwalRoute.get(
   '/getJadwalByPoli',
   async (req: Request<{}, {}, {}, { poli: string }>, res) => {
@@ -165,6 +166,7 @@ JadwalRoute.get("/getPoli",async (req,res) => {
 })
 
 
+
 JadwalRoute.get("/getJadwal",async (req,res) => {
   const getJawalData = await prisma.jadwalPoli.findMany()
 
@@ -178,6 +180,7 @@ JadwalRoute.get("/getJadwal",async (req,res) => {
   })
   }
 })
+
 
 
 /**
@@ -227,9 +230,11 @@ JadwalRoute.post(
  * @param hari - String
  * @param waktu - String
  * @param nama - String: Nama poli yang akan dikoneksikan dengan jadwal
+
+ * TODO: one route 2 way func
  * * Example: { "hari": "Senin", "waktu": "09:00 - 12:00", "nama": "Poli A" }
  */
- JadwalRoute.post(
+JadwalRoute.post(
   '/createJadwal',
   async (req: Request<{}, {}, JadwalCreateInput>, res) => {
     const { hari, waktu, nama } = req.body;
@@ -294,6 +299,7 @@ JadwalRoute.post(
     }
   }
 );
+
 
 
 JadwalRoute.delete("/delPoli/:id",async(req,res) => {
@@ -368,4 +374,7 @@ JadwalRoute.put("/updateJadwal/:id",async (req,res)=> {
 
 
 
+
 export default JadwalRoute;
+
+
