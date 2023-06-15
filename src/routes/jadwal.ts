@@ -121,6 +121,7 @@ JadwalRoute.get(
           nama: true,
           jadwalPoli: {
             select: {
+              id : true,
               hari : true,
               waktu : true
             },
