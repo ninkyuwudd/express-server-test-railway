@@ -150,7 +150,7 @@ JadwalRoute.get(
 
 
 
-JadwalRoute.get("/getPoli",async (re,res) => {
+JadwalRoute.get("/getPoli",async (req,res) => {
   const getpolidata = await prisma.poli.findMany()
 
   try {
@@ -158,6 +158,22 @@ JadwalRoute.get("/getPoli",async (re,res) => {
       data: getpolidata
   })
 
+  } catch (e) {
+    res.json({
+      message : "error fetching data!"
+  })
+  }
+})
+
+
+
+JadwalRoute.get("/getJadwal",async (req,res) => {
+  const getJawalData = await prisma.jadwalPoli.findMany()
+
+  try {
+    res.json({
+      data : getJawalData
+    })
   } catch (e) {
     res.json({
       message : "error fetching data!"
@@ -324,6 +340,35 @@ JadwalRoute.delete("/delJadwal/:id",async (req,res) => {
       message : "gagal menghapus"
     })
   }
+})
+
+
+JadwalRoute.put("/updateJadwal/:id",async (req,res)=> {
+  const jadwalId = req.params.id
+  let jadwalData = req.body
+
+  try {
+    const updateData = await prisma.jadwalPoli.update({
+      where : {
+        id : jadwalId
+      },
+      data : {
+        waktu : jadwalData.waktu
+      }
+    })
+
+    res.json({
+      message : `Berhasil Update pada waktu: ${updateData.waktu}`
+    })
+
+  } catch (e) {
+    res.json({
+      message : "error update"
+  })
+  }
+
+
+
 })
 
 
