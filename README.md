@@ -42,7 +42,7 @@ Express - TS - Prisma
 
    params : 
     
-10. Crete Jadwal
+7. Crete Jadwal
     
    link :  https://express-server-production-8525.up.railway.app/jadwal/createJadwal
 
@@ -50,7 +50,7 @@ Express - TS - Prisma
 
    Data : 
     
-11. Update Jadwal
+8. Update Jadwal
 
    link :  https://express-server-production-8525.up.railway.app/jadwal/updateJadwal/:id
 
